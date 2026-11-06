@@ -1,0 +1,16 @@
+[project]
+name = "pygame-simple-registration-card"
+version = "0.1.0"
+description = "A fullscreen, pixel-sized registration card with a rotating rectangle."
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "pygame>=2.6.1,<3",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/regcard"]
