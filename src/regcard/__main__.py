@@ -44,6 +44,14 @@ def main() -> None:
         metavar="PIXELS",
         help="border and line width in pixels (default: 1)",
     )
+    parser.add_argument(
+        "--bgcolor",
+        nargs=3,
+        type=color_channel,
+        default=(255, 255, 255),
+        metavar=("R", "G", "B"),
+        help="background RGB color (0-255; default: 255 255 255)",
+    )
     arguments = parser.parse_args()
 
     os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
@@ -56,7 +64,7 @@ def main() -> None:
         pygame.display.set_caption("Registration Card")
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         rectangle = pygame.Surface((arguments.width, arguments.height)).convert()
-        rectangle.fill("white")
+        rectangle.fill(arguments.bgcolor)
         rectangle_bounds = rectangle.get_rect()
         pygame.draw.rect(
             rectangle, arguments.linecolor, rectangle_bounds, width=arguments.lineweight
@@ -70,7 +78,7 @@ def main() -> None:
         )
 
         while True:
-            screen.fill("white")
+            screen.fill(arguments.bgcolor)
             screen.blit(rectangle, rectangle.get_rect(center=screen.get_rect().center))
             pygame.display.flip()
 
