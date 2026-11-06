@@ -32,7 +32,15 @@ def main() -> None:
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         rectangle = pygame.Surface((arguments.width, arguments.height)).convert()
         rectangle.fill("white")
-        pygame.draw.rect(rectangle, "black", rectangle.get_rect(), width=1)
+        rectangle_bounds = rectangle.get_rect()
+        pygame.draw.rect(rectangle, "black", rectangle_bounds, width=1)
+        pygame.draw.line(
+            rectangle,
+            "black",
+            rectangle_bounds.midleft,
+            rectangle_bounds.midtop,
+            width=1,
+        )
 
         while True:
             screen.fill("white")
