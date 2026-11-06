@@ -12,6 +12,16 @@ def positive_pixels(value: str) -> int:
     return pixels
 
 
+def color_channel(value: str) -> int:
+    try:
+        channel = int(value)
+    except ValueError as error:
+        raise argparse.ArgumentTypeError("must be an integer between 0 and 255") from error
+    if not 0 <= channel <= 255:
+        raise argparse.ArgumentTypeError("must be an integer between 0 and 255")
+    return channel
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="python -m regcard",
@@ -19,6 +29,21 @@ def main() -> None:
     )
     parser.add_argument("width", type=positive_pixels, help="rectangle width in pixels")
     parser.add_argument("height", type=positive_pixels, help="rectangle height in pixels")
+    parser.add_argument(
+        "--linecolor",
+        nargs=3,
+        type=color_channel,
+        default=(0, 0, 0),
+        metavar=("R", "G", "B"),
+        help="border and line RGB color (0-255; default: 0 0 0)",
+    )
+    parser.add_argument(
+        "--lineweight",
+        type=positive_pixels,
+        default=1,
+        metavar="PIXELS",
+        help="border and line width in pixels (default: 1)",
+    )
     arguments = parser.parse_args()
 
     os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
@@ -33,13 +58,15 @@ def main() -> None:
         rectangle = pygame.Surface((arguments.width, arguments.height)).convert()
         rectangle.fill("white")
         rectangle_bounds = rectangle.get_rect()
-        pygame.draw.rect(rectangle, "black", rectangle_bounds, width=1)
+        pygame.draw.rect(
+            rectangle, arguments.linecolor, rectangle_bounds, width=arguments.lineweight
+        )
         pygame.draw.line(
             rectangle,
-            "black",
+            arguments.linecolor,
             rectangle_bounds.midleft,
             rectangle_bounds.midtop,
-            width=1,
+            width=arguments.lineweight,
         )
 
         while True:
