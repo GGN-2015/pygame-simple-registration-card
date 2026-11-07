@@ -20,15 +20,21 @@ uv run python -m regcard 800 600
 uv run python -m regcard 800 600 --linecolor 255 0 0 --lineweight 3 --bgcolor 32 32 32
 ```
 
-- `--linecolor R G B`：RGB 三个分量均为 0–255 的整数，默认 `0 0 0`（黑色）。
+- `--linecolor R G B`：RGB 三个分量均为 0–255 的整数；普通模式默认 `0 0 0`（黑色），`--showblank` 模式默认 `255 255 255`（白色圆形）。
 - `--lineweight PIXELS`：线宽，单位为像素，必须为正整数，默认 `1`。
 - `--bgcolor R G B`：背景色，RGB 三个分量均为 0–255 的整数，默认 `255 255 255`（白色），矩形内部与外部背景颜色一致。
-- `--showblank`：仅显示全屏纯黑画面，隐藏鼠标，不绘制矩形和连线；忽略颜色和线宽设置，按回车仍保持黑屏，按 **Esc** 退出。
+- `--showblank`：显示全屏黑色画面，并在屏幕中心绘制实心圆；圆半径为 `min(width, height) / 2` 的整数像素值，默认白色，设置 `--linecolor` 后使用该颜色。该模式隐藏鼠标，忽略 `--lineweight` 和 `--bgcolor`，按回车不改变画面，按 **Esc** 退出。
 
 纯黑屏模式：
 
 ```powershell
 uv run python -m regcard 800 600 --showblank
+```
+
+指定黑屏模式圆形颜色：
+
+```powershell
+uv run python -m regcard 800 600 --showblank --linecolor 255 0 0
 ```
 
 - 全屏使用当前显示器分辨率，矩形保持指定像素尺寸。

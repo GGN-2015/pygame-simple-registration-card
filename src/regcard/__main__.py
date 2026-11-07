@@ -33,9 +33,9 @@ def main() -> None:
         "--linecolor",
         nargs=3,
         type=color_channel,
-        default=(0, 0, 0),
+        default=None,
         metavar=("R", "G", "B"),
-        help="border and line RGB color (0-255; default: 0 0 0)",
+        help="border, line, or blank-mode circle RGB color (0-255)",
     )
     parser.add_argument(
         "--lineweight",
@@ -55,7 +55,7 @@ def main() -> None:
     parser.add_argument(
         "--showblank",
         action="store_true",
-        help="show only a black screen, with no rectangle, line, or cursor",
+        help="show a black screen with a centered filled circle, hiding the cursor",
     )
     arguments = parser.parse_args()
 
@@ -71,16 +71,20 @@ def main() -> None:
         rectangle = None
         if arguments.showblank:
             pygame.mouse.set_visible(False)
+            blank_circle_color = arguments.linecolor or (255, 255, 255)
+            blank_circle_radius = min(arguments.width, arguments.height) // 2
         else:
+            pygame.mouse.set_visible(True)
+            line_color = arguments.linecolor or (0, 0, 0)
             rectangle = pygame.Surface((arguments.width, arguments.height)).convert()
             rectangle.fill(arguments.bgcolor)
             rectangle_bounds = rectangle.get_rect()
             pygame.draw.rect(
-                rectangle, arguments.linecolor, rectangle_bounds, width=arguments.lineweight
+                rectangle, line_color, rectangle_bounds, width=arguments.lineweight
             )
             pygame.draw.line(
                 rectangle,
-                arguments.linecolor,
+                line_color,
                 rectangle_bounds.midleft,
                 rectangle_bounds.midtop,
                 width=arguments.lineweight,
@@ -90,6 +94,13 @@ def main() -> None:
             screen.fill("black" if arguments.showblank else arguments.bgcolor)
             if rectangle is not None:
                 screen.blit(rectangle, rectangle.get_rect(center=screen.get_rect().center))
+            else:
+                pygame.draw.circle(
+                    screen,
+                    blank_circle_color,
+                    screen.get_rect().center,
+                    blank_circle_radius,
+                )
             pygame.display.flip()
 
             event = pygame.event.wait()
