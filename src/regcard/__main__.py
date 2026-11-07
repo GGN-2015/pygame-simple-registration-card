@@ -52,6 +52,11 @@ def main() -> None:
         metavar=("R", "G", "B"),
         help="background RGB color (0-255; default: 255 255 255)",
     )
+    parser.add_argument(
+        "--showblank",
+        action="store_true",
+        help="show only a black screen, with no rectangle, line, or cursor",
+    )
     arguments = parser.parse_args()
 
     os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
@@ -63,23 +68,28 @@ def main() -> None:
         pygame.display.init()
         pygame.display.set_caption("Registration Card")
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        rectangle = pygame.Surface((arguments.width, arguments.height)).convert()
-        rectangle.fill(arguments.bgcolor)
-        rectangle_bounds = rectangle.get_rect()
-        pygame.draw.rect(
-            rectangle, arguments.linecolor, rectangle_bounds, width=arguments.lineweight
-        )
-        pygame.draw.line(
-            rectangle,
-            arguments.linecolor,
-            rectangle_bounds.midleft,
-            rectangle_bounds.midtop,
-            width=arguments.lineweight,
-        )
+        rectangle = None
+        if arguments.showblank:
+            pygame.mouse.set_visible(False)
+        else:
+            rectangle = pygame.Surface((arguments.width, arguments.height)).convert()
+            rectangle.fill(arguments.bgcolor)
+            rectangle_bounds = rectangle.get_rect()
+            pygame.draw.rect(
+                rectangle, arguments.linecolor, rectangle_bounds, width=arguments.lineweight
+            )
+            pygame.draw.line(
+                rectangle,
+                arguments.linecolor,
+                rectangle_bounds.midleft,
+                rectangle_bounds.midtop,
+                width=arguments.lineweight,
+            )
 
         while True:
-            screen.fill(arguments.bgcolor)
-            screen.blit(rectangle, rectangle.get_rect(center=screen.get_rect().center))
+            screen.fill("black" if arguments.showblank else arguments.bgcolor)
+            if rectangle is not None:
+                screen.blit(rectangle, rectangle.get_rect(center=screen.get_rect().center))
             pygame.display.flip()
 
             event = pygame.event.wait()
@@ -88,7 +98,10 @@ def main() -> None:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return
-                if event.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+                if rectangle is not None and event.key in (
+                    pygame.K_RETURN,
+                    pygame.K_KP_ENTER,
+                ):
                     rectangle = pygame.transform.rotate(rectangle, 90)
     finally:
         pygame.quit()

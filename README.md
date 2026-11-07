@@ -23,6 +23,13 @@ uv run python -m regcard 800 600 --linecolor 255 0 0 --lineweight 3 --bgcolor 32
 - `--linecolor R G B`：RGB 三个分量均为 0–255 的整数，默认 `0 0 0`（黑色）。
 - `--lineweight PIXELS`：线宽，单位为像素，必须为正整数，默认 `1`。
 - `--bgcolor R G B`：背景色，RGB 三个分量均为 0–255 的整数，默认 `255 255 255`（白色），矩形内部与外部背景颜色一致。
+- `--showblank`：仅显示全屏纯黑画面，隐藏鼠标，不绘制矩形和连线；忽略颜色和线宽设置，按回车仍保持黑屏，按 **Esc** 退出。
+
+纯黑屏模式：
+
+```powershell
+uv run python -m regcard 800 600 --showblank
+```
 
 - 全屏使用当前显示器分辨率，矩形保持指定像素尺寸。
 - 初始矩形左边中点与上边中点之间有一条连线，与边框颜色和线宽一致，随矩形整体旋转。
