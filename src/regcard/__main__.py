@@ -76,9 +76,17 @@ def main() -> None:
         else:
             pygame.mouse.set_visible(True)
             line_color = arguments.linecolor or (0, 0, 0)
-            rectangle = pygame.Surface((arguments.width, arguments.height)).convert()
+            corner_radius = 3 * arguments.lineweight
+            rectangle = pygame.Surface(
+                (
+                    arguments.width + 2 * corner_radius,
+                    arguments.height + 2 * corner_radius,
+                )
+            ).convert()
             rectangle.fill(arguments.bgcolor)
-            rectangle_bounds = rectangle.get_rect()
+            rectangle_bounds = pygame.Rect(
+                corner_radius, corner_radius, arguments.width, arguments.height
+            )
             pygame.draw.rect(
                 rectangle, line_color, rectangle_bounds, width=arguments.lineweight
             )
@@ -89,6 +97,13 @@ def main() -> None:
                 rectangle_bounds.midtop,
                 width=arguments.lineweight,
             )
+            for corner in (
+                rectangle_bounds.topleft,
+                (rectangle_bounds.right - 1, rectangle_bounds.top),
+                (rectangle_bounds.right - 1, rectangle_bounds.bottom - 1),
+                (rectangle_bounds.left, rectangle_bounds.bottom - 1),
+            ):
+                pygame.draw.circle(rectangle, line_color, corner, corner_radius)
 
         while True:
             screen.fill("black" if arguments.showblank else arguments.bgcolor)
